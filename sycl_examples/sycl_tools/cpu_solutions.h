@@ -31,6 +31,26 @@ auto vector_addition_cpu(Vector_T vec_A, Vector_T vec_B) {
   return vec_C;
 }
 
+// matrix multiplication
+template<typename Vector_T>
+auto matrix_multiplication_cpu(Vector_T vec_A,
+                               Vector_T vec_B,
+                               int M,
+                               int K,
+                               int N) {
+  Vector_T vec_C(M*N, 0);
+
+  for(int j = 0; j < N; ++j) {
+    for(int i = 0; i < M; ++i) {
+      for(int k = 0; k < K; ++k) {
+        vec_C[j*M + i] += vec_A[k*M + i]*vec_B[j*K + k];
+      }
+    }
+  }
+
+  return vec_C;
+}
+
 } // namespace sycl_tools
 
 #endif // CPU_SOLUTIONS_H

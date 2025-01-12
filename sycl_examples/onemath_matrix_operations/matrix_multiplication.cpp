@@ -17,6 +17,7 @@
 // local
 ///////////////////////////////////////////////////////////////////////
 #include "../sycl_tools/buffers.h"
+#include "../sycl_tools/cpu_solutions.h"
 #include "../sycl_tools/devices.h"
 #include "../sycl_tools/validate.h"
 #include "../sycl_tools/vectors.h"
@@ -45,8 +46,51 @@ using Vector_T = std::vector<double>;
 
 int main() {
   const int M = 123;
-  const int N = 568;
-  const int K = 399;
+  const int K = 568;
+  const int N = 399;
+
+  const Scalar_T alpha = 1.0;
+  const Scalar_T beta = 0.0;
+
+  // input matrices
+  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*K, 0, 100);
+  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(K*N, 0, 100);
+
+  // output matrix
+  Vector_T matrix_C(M*N, 0.0);
+
+  // answer computed on cpu
+  const auto answer = sycl_tools::matrix_multiplication_cpu(matrix_A, matrix_B, M, K, N);
+
+  // sycl scope
+  {
+    // sycl buffers
+    auto buf_A = sycl_tools::make_buffer<Scalar_T>(matrix_A, M*K);
+    auto buf_B = sycl_tools::make_buffer<Scalar_T>(matrix_B, K*N);
+    auto buf_C = sycl_tools::make_buffer<Scalar_T>(matrix_C, M*N);
+
+    auto Q = sycl_tools::get_device(0, 0);
+
+    // general matrix multiplication
+    oneapi::mkl::blas::column_major::gemm(
+      Q,
+      oneapi::mkl::transpose::nontrans,
+      oneapi::mkl::transpose::nontrans,
+      M, N, K,
+      alpha,
+      buf_A,
+      M,
+      buf_B,
+      K,
+      beta,
+      buf_C,
+      M
+    );
+
+    Q.wait();
+  }
+
+  sycl_tools::check_equal(matrix_C, answer);
 
   return 0;
 }

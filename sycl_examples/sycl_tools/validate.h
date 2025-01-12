@@ -21,15 +21,20 @@
 // stl
 ///////////////////////////////////////////////////////////////////////
 #include <assert.h>
+#include <cmath>
 #include <iostream>
 
 namespace sycl_tools {
 
 // check if two vectors are equivalent
 template<typename Vector_T>
-void check_equal(Vector_T a, Vector_T b) {
+void check_equal(Vector_T a, Vector_T b, double epsilon = 1.0e-6) {
   for(int i = 0; i < a.size(); ++i) {
-    assert(a[i] == b[i]);
+    if constexpr(std::is_floating_point_v<typename Vector_T::value_type>) {
+      assert(std::fabs(a[i] - b[i]) <= epsilon);
+    } else {
+      assert(a[i] == b[i]);
+    }
   }
 
   std::cout << "The two vectors are equal!" << std::endl;
