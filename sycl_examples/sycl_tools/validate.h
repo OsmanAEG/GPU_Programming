@@ -26,9 +26,21 @@
 
 namespace sycl_tools {
 
+// check if two values are equivalent
+template<typename Scalar_T>
+void check_equal_value(Scalar_T a, Scalar_T b, double epsilon = 1.0e-6) {
+  if constexpr(std::is_floating_point_v<Scalar_T>) {
+    assert(std::fabs(a - b) <= epsilon);
+  } else {
+    assert(a == b);
+  }
+
+  std::cout << "The two values are equal!" << std::endl;
+}
+
 // check if two vectors are equivalent
 template<typename Vector_T>
-void check_equal(Vector_T a, Vector_T b, double epsilon = 1.0e-6) {
+void check_equal_vector(Vector_T a, Vector_T b, double epsilon = 1.0e-6) {
   for(int i = 0; i < a.size(); ++i) {
     if constexpr(std::is_floating_point_v<typename Vector_T::value_type>) {
       assert(std::fabs(a[i] - b[i]) <= epsilon);

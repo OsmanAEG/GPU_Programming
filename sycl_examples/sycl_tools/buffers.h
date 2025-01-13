@@ -24,23 +24,33 @@
 
 namespace sycl_tools {
 
+// making a 0D buffer
+template<typename Scalar_T>
+auto make_buffer(Scalar_T& val) {
+  sycl::buffer<Scalar_T, 1> buf(&val, sycl::range<1>(1));
+  return buf;
+}
+
 // making a 1D buffer
-template<typename Scalar_T, typename Vector_T>
+template<typename Vector_T>
 auto make_buffer(Vector_T& vec, int M) {
+  using Scalar_T = typename Vector_T::value_type;
   sycl::buffer<Scalar_T, 1> buf(vec.data(), sycl::range<1>(M));
   return buf;
 }
 
 // making a 2D buffer
-template<typename Scalar_T, typename Vector_T>
+template<typename Vector_T>
 auto make_buffer(Vector_T& vec, int M, int N) {
+  using Scalar_T = typename Vector_T::value_type;
   sycl::buffer<Scalar_T, 2> buf(vec.data(), sycl::range<2>(M, N));
   return buf;
 }
 
 // making a 3D buffer
-template<typename Scalar_T, typename Vector_T>
+template<typename Vector_T>
 auto make_buffer(Vector_T& vec, int M, int N, int K) {
+  using Scalar_T = typename Vector_T::value_type;
   sycl::buffer<Scalar_T, 3> buf(vec.data(), sycl::range<3>(M, N, K));
   return buf;
 }

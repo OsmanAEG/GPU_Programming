@@ -10,22 +10,17 @@
 // license, without any additional terms or conditions.
 ///////////////////////////////////////////////////////////////////////
 /// \file
-/// \brief Onemath example for matrix multiplication with sycl
+/// \brief Basic example of matrix addition with sycl
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 // local
 ///////////////////////////////////////////////////////////////////////
 #include "../sycl_tools/buffers.h"
-#include "../sycl_tools/cpu_solutions.h"
 #include "../sycl_tools/devices.h"
+#include "../sycl_tools/cpu_solutions.h"
 #include "../sycl_tools/validate.h"
 #include "../sycl_tools/vectors.h"
-
-///////////////////////////////////////////////////////////////////////
-// onemath
-///////////////////////////////////////////////////////////////////////
-#include <oneapi/mkl.hpp>
 
 ///////////////////////////////////////////////////////////////////////
 // stl
@@ -42,55 +37,43 @@
 // defining types
 ///////////////////////////////////////////////////////////////////////
 using Scalar_T = double;
-using Vector_T = std::vector<double>;
+using Vector_T = std::vector<Scalar_T>;
 
 int main() {
-  const int M = 123;
-  const int K = 568;
-  const int N = 399;
-
-  const Scalar_T alpha = 1.0;
-  const Scalar_T beta = 0.0;
+  const int M = 120;
+  const int N = 500;
 
   // input matrices
-  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*K, 0, 100);
-  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(K*N, 0, 100);
+  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
+  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
 
   // output matrix
   Vector_T matrix_C(M*N, 0.0);
 
   // answer computed on cpu
-  const auto answer = sycl_tools::matrix_multiplication_cpu(matrix_A, matrix_B, M, K, N);
+  const auto answer = sycl_tools::vector_addition_cpu(matrix_A, matrix_B);
 
   // sycl scope
   {
     // sycl buffers
-    auto buf_A = sycl_tools::make_buffer<Scalar_T>(matrix_A, M*K);
-    auto buf_B = sycl_tools::make_buffer<Scalar_T>(matrix_B, K*N);
-    auto buf_C = sycl_tools::make_buffer<Scalar_T>(matrix_C, M*N);
+    auto buf_A = sycl_tools::make_buffer(matrix_A, M, N);
+    auto buf_B = sycl_tools::make_buffer(matrix_B, M, N);
+    auto buf_C = sycl_tools::make_buffer(matrix_C, M, N);
 
     auto Q = sycl_tools::get_device(0, 0);
 
-    // general matrix multiplication
-    oneapi::mkl::blas::column_major::gemm(
-      Q,
-      oneapi::mkl::transpose::nontrans,
-      oneapi::mkl::transpose::nontrans,
-      M, N, K,
-      alpha,
-      buf_A,
-      M,
-      buf_B,
-      K,
-      beta,
-      buf_C,
-      M
-    );
+    Q.submit([&](sycl::handler& h) {
+      sycl::accessor acc_A{buf_A, h};
+      sycl::accessor acc_B{buf_B, h};
+      sycl::accessor acc_C{buf_C, h};
 
-    Q.wait();
+      h.parallel_for(sycl::range<2>(M, N), [=](sycl::id<2> idx) {
+        acc_C[idx] = acc_A[idx] + acc_B[idx];
+      });
+    });
   }
 
-  sycl_tools::check_equal(matrix_C, answer);
+  sycl_tools::check_equal_vector(matrix_C, answer);
 
   return 0;
 }

@@ -19,19 +19,24 @@
 
 namespace sycl_tools {
 
-// vector addition
+///////////////////////////////////////////////////////////////////////
+// dot product
+///////////////////////////////////////////////////////////////////////
 template<typename Vector_T>
-auto vector_addition_cpu(Vector_T vec_A, Vector_T vec_B) {
-  Vector_T vec_C(vec_A.size(), 0.0);
+auto dot_product(Vector_T vec_A, Vector_T vec_B) {
+  using Scalar_T = typename Vector_T::value_type;
+  Scalar_T sum = 0;
 
   for(int i = 0; i < vec_A.size(); ++i) {
-    vec_C[i] = vec_A[i] + vec_B[i];
+    sum += vec_A[i] + vec_B[i];
   }
 
-  return vec_C;
+  return sum;
 }
 
+///////////////////////////////////////////////////////////////////////
 // matrix multiplication
+///////////////////////////////////////////////////////////////////////
 template<typename Vector_T>
 auto matrix_multiplication_cpu(Vector_T vec_A,
                                Vector_T vec_B,
@@ -46,6 +51,20 @@ auto matrix_multiplication_cpu(Vector_T vec_A,
         vec_C[j*M + i] += vec_A[k*M + i]*vec_B[j*K + k];
       }
     }
+  }
+
+  return vec_C;
+}
+
+///////////////////////////////////////////////////////////////////////
+// vector addition
+///////////////////////////////////////////////////////////////////////
+template<typename Vector_T>
+auto vector_addition_cpu(Vector_T vec_A, Vector_T vec_B) {
+  Vector_T vec_C(vec_A.size(), 0.0);
+
+  for(int i = 0; i < vec_A.size(); ++i) {
+    vec_C[i] = vec_A[i] + vec_B[i];
   }
 
   return vec_C;

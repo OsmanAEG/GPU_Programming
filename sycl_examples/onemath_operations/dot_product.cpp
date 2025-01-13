@@ -10,17 +10,22 @@
 // license, without any additional terms or conditions.
 ///////////////////////////////////////////////////////////////////////
 /// \file
-/// \brief Basic example of matrix addition with sycl
+/// \brief Onemath example for vector dot product with sycl
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 // local
 ///////////////////////////////////////////////////////////////////////
 #include "../sycl_tools/buffers.h"
-#include "../sycl_tools/devices.h"
 #include "../sycl_tools/cpu_solutions.h"
+#include "../sycl_tools/devices.h"
 #include "../sycl_tools/validate.h"
 #include "../sycl_tools/vectors.h"
+
+///////////////////////////////////////////////////////////////////////
+// onemath
+///////////////////////////////////////////////////////////////////////
+#include <oneapi/mkl.hpp>
 
 ///////////////////////////////////////////////////////////////////////
 // stl
@@ -37,43 +42,38 @@
 // defining types
 ///////////////////////////////////////////////////////////////////////
 using Scalar_T = double;
-using Vector_T = std::vector<Scalar_T>;
+using Vector_T = std::vector<double>;
 
 int main() {
-  const int M = 120;
-  const int N = 500;
+  const int N = 2048;
 
-  // input matrices
-  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
-  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
+  const int stride = 1;
 
-  // output matrix
-  Vector_T matrix_C(M*N, 0.0);
+  // input vectors
+  const auto vec_A = sycl_tools::make_random_vector<Scalar_T>(N, 0, 100);
+  const auto vec_B = sycl_tools::make_random_vector<Scalar_T>(N, 0, 100);
+
+  // final result
+  Scalar_T sum = 0;
 
   // answer computed on cpu
-  const auto answer = sycl_tools::vector_addition_cpu(matrix_A, matrix_B);
+  const auto answer = sycl_tools::dot_product(vec_A, vec_B);
 
   // sycl scope
   {
     // sycl buffers
-    auto buf_A = sycl_tools::make_buffer<Scalar_T>(matrix_A, M, N);
-    auto buf_B = sycl_tools::make_buffer<Scalar_T>(matrix_B, M, N);
-    auto buf_C = sycl_tools::make_buffer<Scalar_T>(matrix_C, M, N);
+    auto buf_A   = sycl_tools::make_buffer(vec_A, N);
+    auto buf_B   = sycl_tools::make_buffer(vec_B, N);
+    auto sum_buf = sycl_tools::make_buffer(sum);
 
     auto Q = sycl_tools::get_device(0, 0);
 
-    Q.submit([&](sycl::handler& h) {
-      sycl::accessor acc_A{buf_A, h};
-      sycl::accessor acc_B{buf_B, h};
-      sycl::accessor acc_C{buf_C, h};
+    // vector dot product
 
-      h.parallel_for(sycl::range<2>(M, N), [=](sycl::id<2> idx) {
-        acc_C[idx] = acc_A[idx] + acc_B[idx];
-      });
-    });
+    Q.wait();
   }
 
-  sycl_tools::check_equal(matrix_C, answer);
+  sycl_tools::check_equal(sum, answer);
 
   return 0;
 }
