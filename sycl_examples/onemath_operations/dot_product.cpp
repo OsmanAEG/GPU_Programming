@@ -73,7 +73,7 @@ int main() {
     Q.wait();
   }
 
-  sycl_tools::check_equal(sum, answer);
+  sycl_tools::check_equal_value(sum, answer);
 
   return 0;
 }
