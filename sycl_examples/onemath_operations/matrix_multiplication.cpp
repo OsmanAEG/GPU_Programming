@@ -78,13 +78,10 @@ int main() {
       oneapi::mkl::transpose::nontrans,
       M, N, K,
       alpha,
-      buf_A,
-      M,
-      buf_B,
-      K,
+      buf_A, M,
+      buf_B, K,
       beta,
-      buf_C,
-      M
+      buf_C, M
     );
 
     Q.wait();

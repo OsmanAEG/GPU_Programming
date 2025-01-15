@@ -28,7 +28,7 @@ auto dot_product(Vector_T vec_A, Vector_T vec_B) {
   Scalar_T sum = 0;
 
   for(int i = 0; i < vec_A.size(); ++i) {
-    sum += vec_A[i] + vec_B[i];
+    sum += vec_A[i]*vec_B[i];
   }
 
   return sum;
