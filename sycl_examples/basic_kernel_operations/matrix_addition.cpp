@@ -17,8 +17,8 @@
 // local
 ///////////////////////////////////////////////////////////////////////
 #include "../sycl_tools/buffers.h"
-#include "../sycl_tools/devices.h"
 #include "../sycl_tools/cpu_solutions.h"
+#include "../sycl_tools/devices.h"
 #include "../sycl_tools/validate.h"
 #include "../sycl_tools/vectors.h"
 
@@ -44,11 +44,11 @@ int main() {
   const int N = 500;
 
   // input matrices
-  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
-  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(M*N, 0, 100);
+  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
+  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
 
   // output matrix
-  Vector_T matrix_C(M*N, 0.0);
+  Vector_T matrix_C(M * N, 0.0);
 
   // answer computed on cpu
   const auto answer = sycl_tools::vector_addition_cpu(matrix_A, matrix_B);
@@ -67,9 +67,8 @@ int main() {
       sycl::accessor acc_B{buf_B, h};
       sycl::accessor acc_C{buf_C, h};
 
-      h.parallel_for(sycl::range<2>(M, N), [=](sycl::id<2> idx) {
-        acc_C[idx] = acc_A[idx] + acc_B[idx];
-      });
+      h.parallel_for(sycl::range<2>(M, N),
+                     [=](sycl::id<2> idx) { acc_C[idx] = acc_A[idx] + acc_B[idx]; });
     });
   }
 
