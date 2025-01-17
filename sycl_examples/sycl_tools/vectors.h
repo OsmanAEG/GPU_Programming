@@ -30,30 +30,30 @@
 namespace sycl_tools {
 
 // generate random values
-template<typename Scalar_T>
+template <typename Scalar_T>
 auto generate_random_vec(int N, double min, double max) {
   std::vector<Scalar_T> vec(N, 0.0);
 
   std::random_device random_device;
   std::mt19937 generator(random_device());
 
-  if constexpr(std::is_integral<Scalar_T>::value) {
+  if constexpr (std::is_integral<Scalar_T>::value) {
     std::uniform_int_distribution<Scalar_T> distribution(min, max);
-    for(auto& val : vec) val = distribution(generator);
+    for (auto& val : vec) val = distribution(generator);
   } else {
     std::uniform_real_distribution<Scalar_T> distribution(min, max);
-    for(auto& val : vec) val = distribution(generator);
+    for (auto& val : vec) val = distribution(generator);
   }
 
   return vec;
 }
 
 // making a vector of random values
-template<typename Scalar_T>
+template <typename Scalar_T>
 auto make_random_vector(int N, double min, double max) {
   return generate_random_vec<Scalar_T>(N, min, max);
 }
 
-} // namespace sycl_tools
+}  // namespace sycl_tools
 
-#endif // VECTORS_H
+#endif  // VECTORS_H
