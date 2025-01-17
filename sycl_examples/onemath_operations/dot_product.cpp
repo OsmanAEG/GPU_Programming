@@ -69,13 +69,7 @@ int main() {
     auto Q = sycl_tools::get_device(0, 0);
 
     // vector dot product
-    oneapi::mkl::blas::column_major::dot(
-      Q,
-      N,
-      buf_A, stride,
-      buf_B, stride,
-      sum_buf
-    );
+    oneapi::mkl::blas::column_major::dot(Q, N, buf_A, stride, buf_B, stride, sum_buf);
 
     Q.wait();
   }

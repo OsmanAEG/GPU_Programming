@@ -50,14 +50,14 @@ int main() {
   const int N = 399;
 
   const Scalar_T alpha = 1.0;
-  const Scalar_T beta = 0.0;
+  const Scalar_T beta  = 0.0;
 
   // input matrices
-  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M*K, 0, 100);
-  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(K*N, 0, 100);
+  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M * K, 0, 100);
+  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(K * N, 0, 100);
 
   // output matrix
-  Vector_T matrix_C(M*N, 0.0);
+  Vector_T matrix_C(M * N, 0.0);
 
   // answer computed on cpu
   const auto answer = sycl_tools::matrix_multiplication_cpu(matrix_A, matrix_B, M, K, N);
@@ -65,24 +65,16 @@ int main() {
   // sycl scope
   {
     // sycl buffers
-    auto buf_A = sycl_tools::make_buffer(matrix_A, M*K);
-    auto buf_B = sycl_tools::make_buffer(matrix_B, K*N);
-    auto buf_C = sycl_tools::make_buffer(matrix_C, M*N);
+    auto buf_A = sycl_tools::make_buffer(matrix_A, M * K);
+    auto buf_B = sycl_tools::make_buffer(matrix_B, K * N);
+    auto buf_C = sycl_tools::make_buffer(matrix_C, M * N);
 
     auto Q = sycl_tools::get_device(0, 0);
 
     // general matrix multiplication
-    oneapi::mkl::blas::column_major::gemm(
-      Q,
-      oneapi::mkl::transpose::nontrans,
-      oneapi::mkl::transpose::nontrans,
-      M, N, K,
-      alpha,
-      buf_A, M,
-      buf_B, K,
-      beta,
-      buf_C, M
-    );
+    oneapi::mkl::blas::column_major::gemm(Q, oneapi::mkl::transpose::nontrans,
+                                          oneapi::mkl::transpose::nontrans, M, N, K, alpha, buf_A,
+                                          M, buf_B, K, beta, buf_C, M);
 
     Q.wait();
   }
