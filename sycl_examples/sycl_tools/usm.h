@@ -22,6 +22,7 @@
 ///////////////////////////////////////////////////////////////////////
 #include <sycl/sycl.hpp>
 
-namespace sycl_tools {}  // namespace sycl_tools
+namespace sycl_tools {
+}  // namespace sycl_tools
 
 #endif  // USM_H

@@ -31,7 +31,9 @@ namespace sycl_tools {
 
 // generate random values
 template <typename Scalar_T>
-auto generate_random_vec(int N, double min, double max) {
+auto
+generate_random_vec(int N, double min, double max)
+{
   std::vector<Scalar_T> vec(N, 0.0);
 
   std::random_device random_device;
@@ -39,10 +41,11 @@ auto generate_random_vec(int N, double min, double max) {
 
   if constexpr (std::is_integral<Scalar_T>::value) {
     std::uniform_int_distribution<Scalar_T> distribution(min, max);
-    for (auto& val : vec) val = distribution(generator);
-  } else {
+    for (auto &val : vec) val = distribution(generator);
+  }
+  else {
     std::uniform_real_distribution<Scalar_T> distribution(min, max);
-    for (auto& val : vec) val = distribution(generator);
+    for (auto &val : vec) val = distribution(generator);
   }
 
   return vec;
@@ -50,7 +53,9 @@ auto generate_random_vec(int N, double min, double max) {
 
 // making a vector of random values
 template <typename Scalar_T>
-auto make_random_vector(int N, double min, double max) {
+auto
+make_random_vector(int N, double min, double max)
+{
   return generate_random_vec<Scalar_T>(N, min, max);
 }
 
