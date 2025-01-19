@@ -44,9 +44,7 @@
 using Scalar_T = double;
 using Vector_T = std::vector<double>;
 
-int
-main()
-{
+int main() {
   const int N = 2048;
 
   const int stride = 1;
@@ -71,8 +69,8 @@ main()
     auto Q = sycl_tools::get_device(0, 0);
 
     // vector dot product
-    oneapi::mkl::blas::column_major::dot(Q, N, buf_A, stride, buf_B, stride,
-                                         sum_buf);
+    oneapi::mkl::blas::column_major::dot(
+      Q, N, buf_A, stride, buf_B, stride, sum_buf);
 
     Q.wait();
   }

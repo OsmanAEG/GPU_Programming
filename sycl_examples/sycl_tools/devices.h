@@ -30,9 +30,7 @@
 namespace sycl_tools {
 
 // selecting a sycl device
-auto
-get_device(int platform_idx, int device_idx)
-{
+auto get_device(int platform_idx, int device_idx) {
   auto platforms = sycl::platform::get_platforms();
   auto devices = platforms[platform_idx].get_devices();
 
@@ -45,6 +43,6 @@ get_device(int platform_idx, int device_idx)
   return Q;
 }
 
-}  // namespace sycl_tools
+} // namespace sycl_tools
 
-#endif  // DEVICES_H
+#endif // DEVICES_H

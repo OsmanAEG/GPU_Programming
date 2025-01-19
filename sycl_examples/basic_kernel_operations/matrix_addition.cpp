@@ -39,17 +39,13 @@
 using Scalar_T = double;
 using Vector_T = std::vector<Scalar_T>;
 
-int
-main()
-{
+int main() {
   const int M = 120;
   const int N = 500;
 
   // input matrices
-  const auto matrix_A =
-          sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
-  const auto matrix_B =
-          sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
+  const auto matrix_A = sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
+  const auto matrix_B = sycl_tools::make_random_vector<Scalar_T>(M * N, 0, 100);
 
   // output matrix
   Vector_T matrix_C(M * N, 0.0);
@@ -66,7 +62,7 @@ main()
 
     auto Q = sycl_tools::get_device(0, 0);
 
-    Q.submit([&](sycl::handler &h) {
+    Q.submit([&](sycl::handler& h) {
       sycl::accessor acc_A{buf_A, h};
       sycl::accessor acc_B{buf_B, h};
       sycl::accessor acc_C{buf_C, h};
