@@ -39,12 +39,16 @@ auto generate_random_vec(int N, double min, double max) {
 
   if constexpr (std::is_integral<Scalar_T>::value) {
     std::uniform_int_distribution<Scalar_T> distribution(min, max);
-    for (auto& val : vec)
+
+    for (auto& val : vec) {
       val = distribution(generator);
+    }
   } else {
     std::uniform_real_distribution<Scalar_T> distribution(min, max);
-    for (auto& val : vec)
+
+    for (auto& val : vec) {
       val = distribution(generator);
+    }
   }
 
   return vec;

@@ -70,7 +70,7 @@ int main() {
 
     // vector dot product
     oneapi::mkl::blas::column_major::dot(
-      Q, N, buf_A, stride, buf_B, stride, sum_buf);
+        Q, N, buf_A, stride, buf_B, stride, sum_buf);
 
     Q.wait();
   }

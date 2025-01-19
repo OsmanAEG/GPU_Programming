@@ -39,7 +39,7 @@ auto dot_product(Vector_T vec_A, Vector_T vec_B) {
 ///////////////////////////////////////////////////////////////////////
 template<typename Vector_T>
 auto matrix_multiplication_cpu(
-  Vector_T vec_A, Vector_T vec_B, int M, int K, int N) {
+    Vector_T vec_A, Vector_T vec_B, int M, int K, int N) {
   Vector_T vec_C(M * N, 0);
 
   for (int j = 0; j < N; ++j) {

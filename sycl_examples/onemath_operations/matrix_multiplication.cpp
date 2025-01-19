@@ -61,7 +61,7 @@ int main() {
 
   // answer computed on cpu
   const auto answer = sycl_tools::matrix_multiplication_cpu(
-    matrix_A, matrix_B, M, K, N);
+      matrix_A, matrix_B, M, K, N);
 
   // sycl scope
   {
@@ -74,20 +74,20 @@ int main() {
 
     // general matrix multiplication
     oneapi::mkl::blas::column_major::gemm(
-      Q,
-      oneapi::mkl::transpose::nontrans,
-      oneapi::mkl::transpose::nontrans,
-      M,
-      N,
-      K,
-      alpha,
-      buf_A,
-      M,
-      buf_B,
-      K,
-      beta,
-      buf_C,
-      M);
+        Q,
+        oneapi::mkl::transpose::nontrans,
+        oneapi::mkl::transpose::nontrans,
+        M,
+        N,
+        K,
+        alpha,
+        buf_A,
+        M,
+        buf_B,
+        K,
+        beta,
+        buf_C,
+        M);
 
     Q.wait();
   }
