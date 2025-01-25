@@ -18,9 +18,9 @@
 ///////////////////////////////////////////////////////////////////////
 #include "../sycl_tools/cpu_solutions.h"
 #include "../sycl_tools/devices.h"
+#include "../sycl_tools/usm.h"
 #include "../sycl_tools/validate.h"
 #include "../sycl_tools/vectors.h"
-#include "../sycl_tools/usm.h"
 
 ///////////////////////////////////////////////////////////////////////
 // onemath
@@ -89,7 +89,7 @@ int main() {
 
   Q.wait();
 
-  Q.memcpy(matrix_C.data(), usm_C, M*N*sizeof(Scalar_T)).wait();
+  Q.memcpy(matrix_C.data(), usm_C, M * N * sizeof(Scalar_T)).wait();
 
   sycl_tools::check_equal_vector(matrix_C, answer);
 
